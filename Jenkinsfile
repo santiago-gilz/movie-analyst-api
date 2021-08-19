@@ -5,7 +5,6 @@ pipeline {
         gitCredentials = "githubcredentials"
         repoUrl = "https://github.com/santiago-gilz/movie-analyst-api.git"
         dockerImage = ''
-        PORT="3000"
     }
     agent any
     stages {
@@ -25,7 +24,7 @@ pipeline {
         stage('Building Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("$registry:$BUILD_NUMBER", "--build-arg PORT=$PORT .")
+                    dockerImage = docker.build("$registry:$BUILD_NUMBER")
                 }
             }
         }
