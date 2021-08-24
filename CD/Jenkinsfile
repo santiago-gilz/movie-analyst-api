@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Cloning system config repo') {
             steps {
-                git branch: "feature/docker", 
+                git branch: "master", 
                     credentialsId: "githubcredentials", 
                     url: "https://github.com/santiago-gilz/rampup-sysconfig.git"
             }
