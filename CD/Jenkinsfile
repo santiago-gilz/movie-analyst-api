@@ -1,0 +1,49 @@
+pipeline {
+    environment {
+        API_LB_IP = "internal-sgilz-api-elb-430261533.us-west-1.elb.amazonaws.com"
+    }
+    agent any
+    stages {
+        stage('Cloning system config repo') {
+            steps {
+                git branch: "master", 
+                    credentialsId: "githubcredentials", 
+                    url: "https://github.com/santiago-gilz/rampup-sysconfig.git"
+            }
+        }
+
+        stage('Running Ansible playbook') {
+            steps {
+                withCredentials([aws(credentialsId: 'awscredentials')]) {
+                    ansiColor('xterm') {
+                        ansiblePlaybook( 
+                            become: true,
+                            becomeUser: 'centos',
+                            colorized: true,
+                            credentialsId: 'sshKeyPair',
+                            disableHostKeyChecking: true,
+                            dynamicInventory: true, 
+                            extraVars: [
+                                api_lb_ip: env.API_LB_IP
+                            ],
+                            inventory: 'environments/staging/aws_ec2.yml', 
+                            playbook: 'playbooks/api.yml',
+                        ) 
+                    }
+                }
+            }
+        }
+    }
+    post{
+        always{
+            deleteDir()
+        }
+        success{
+            echo "========pipeline executed successfully ========"
+        }
+        failure{
+            echo "========pipeline execution failed========"
+        }
+    }
+}
+
