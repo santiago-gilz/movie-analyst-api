@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('Cloning system config repo') {
             steps {
-                git branch: "master", 
+                git branch: "feature/docker", 
                     credentialsId: "githubcredentials", 
                     url: "https://github.com/santiago-gilz/rampup-sysconfig.git"
             }
@@ -17,8 +17,6 @@ pipeline {
                 withCredentials([aws(credentialsId: 'awscredentials')]) {
                     ansiColor('xterm') {
                         ansiblePlaybook( 
-                            become: true,
-                            becomeUser: 'centos',
                             colorized: true,
                             credentialsId: 'sshKeyPair',
                             disableHostKeyChecking: true,
